@@ -1,4 +1,4 @@
- package fr.renovial.backend.model;
+package fr.renovial.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,12 +14,12 @@ import java.util.Collections;
 @Getter
 @Setter
 @Table(name = "utilisateur")
-public class utilisateur implements UserDetails {
+public class Utilisateur implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_utilisateur")
-    private Long idUtilisateur;
+    private Integer idUtilisateur;
 
     @Column(nullable = false, length = 100)
     private String nom;
@@ -78,4 +78,3 @@ public class utilisateur implements UserDetails {
         return Boolean.TRUE.equals(this.actif);
     }
 }
-

@@ -4,7 +4,7 @@ import fr.renovial.backend.dto.request.AuthRequest;
 import fr.renovial.backend.dto.request.RegisterRequest;
 import fr.renovial.backend.dto.response.AuthResponse;
 import fr.renovial.backend.model.Role;
-import fr.renovial.backend.model.utilisateur;
+import fr.renovial.backend.model.Utilisateur;
 import fr.renovial.backend.repository.IRoleRepository;
 import fr.renovial.backend.repository.IUserRepository;
 import fr.renovial.backend.security.JwtService;
@@ -44,7 +44,7 @@ public class AuthService implements IAuthService {
         Role clientRole = roleRepository.findByName("CLIENT")
                 .orElseThrow(() -> new IllegalStateException("Le rôle CLIENT n'existe pas."));
 
-        utilisateur user = new utilisateur();
+        Utilisateur user = new Utilisateur();
         user.setNom(registerRequest.nom());
         user.setEmail(registerRequest.email());
         user.setTelephone(registerRequest.telephone());
@@ -67,7 +67,7 @@ public class AuthService implements IAuthService {
 
         authenticationManager.authenticate(authenticationToken);
 
-        utilisateur user = userRepository.findByEmail(request.email())
+        Utilisateur user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable."));
 
         String token = jwtService.generateToken(user);
