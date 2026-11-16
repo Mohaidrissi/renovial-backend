@@ -41,8 +41,8 @@ public class AuthService implements IAuthService {
             throw new IllegalArgumentException("Cette adresse email est déjà utilisée.");
         }
 
-        Role clientRole = roleRepository.findByName("CLIENT")
-                .orElseThrow(() -> new IllegalStateException("Le rôle CLIENT n'existe pas."));
+        Role clientRole = roleRepository.findByName("ROLE_CLIENT")
+                .orElseThrow(() -> new IllegalStateException("Le rôle ROLE_CLIENT n'existe pas."));
 
         Utilisateur user = new Utilisateur();
         user.setNom(registerRequest.nom());
