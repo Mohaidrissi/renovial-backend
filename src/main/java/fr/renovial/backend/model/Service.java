@@ -28,7 +28,7 @@ public class Service {
     private BigDecimal prixUnitaire;
 
     @Column(nullable = false)
-    private Boolean actif;
+    private Boolean actif = true;
 
     @Column(name = "date_creation", nullable = false)
     private LocalDateTime dateCreation;
@@ -39,4 +39,14 @@ public class Service {
     @ManyToOne
     @JoinColumn(name = "id_unite", nullable = false)
     private Unite unite;
+
+    @PrePersist
+    protected void onCreate() {
+        dateCreation = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        dateModification = LocalDateTime.now();
+    }
 }
