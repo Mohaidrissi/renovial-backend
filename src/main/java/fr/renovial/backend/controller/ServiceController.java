@@ -1,7 +1,7 @@
 package fr.renovial.backend.controller;
 
-import fr.renovial.backend.model.Service;
-import fr.renovial.backend.repository.IServiceRepository;
+import fr.renovial.backend.dto.response.PrestationResponse;
+import fr.renovial.backend.service.IPrestationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ServiceController {
 
-    private final IServiceRepository serviceRepository;
-
-
+    private final IPrestationService prestationService;
 
     @GetMapping("/actifs")
-    public List<Service> getServicesActifs() {
-        return serviceRepository.findByActifTrue();
+    public List<PrestationResponse> getServicesActifs() {
+        return prestationService.getServicesActifs();
     }
 }
