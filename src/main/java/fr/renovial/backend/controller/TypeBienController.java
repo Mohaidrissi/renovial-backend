@@ -1,7 +1,7 @@
 package fr.renovial.backend.controller;
 
-import fr.renovial.backend.model.TypeBien;
-import fr.renovial.backend.repository.ITypeBienRepository;
+import fr.renovial.backend.dto.response.TypeBienResponse;
+import fr.renovial.backend.service.ITypeBienService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TypeBienController {
 
-    private final ITypeBienRepository typeBienRepository;
+    private final ITypeBienService typeBienService;
 
     @GetMapping
-    public List<TypeBien> getTypesBien() {
-        return typeBienRepository.findAll();
+    public List<TypeBienResponse> getTypesBien() {
+        return typeBienService.getTypesBien();
     }
 }
