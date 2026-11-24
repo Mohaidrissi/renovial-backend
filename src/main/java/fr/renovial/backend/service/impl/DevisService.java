@@ -22,6 +22,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DevisService implements IDevisService {
 
+    // Taux de TVA donnés par le chef d'entreprise
+    private static final BigDecimal TVA_LOCAL_PRO = new BigDecimal("20.00");
+    private static final BigDecimal TVA_ECONOMIE_ENERGIE = new BigDecimal("5.50");
+    private static final BigDecimal TVA_AUTRES_TRAVAUX = new BigDecimal("10.00");
+
     private final IDevisRepository devisRepository;
     private final IContenirRepository contenirRepository;
     private final IServiceRepository serviceRepository;
@@ -56,7 +61,6 @@ public class DevisService implements IDevisService {
 
         devis.setReference("DEV-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase());
         devis.setDateCreation(LocalDateTime.now());
-        devis.setTauxTva(new BigDecimal("5.50"));
         devis.setTotalHt(BigDecimal.ZERO);
         devis.setTotalTtc(BigDecimal.ZERO);
         devis.setPrecisions(request.precisions());
@@ -82,6 +86,7 @@ public class DevisService implements IDevisService {
         devisRepository.save(devis);
 
         BigDecimal totalHt = BigDecimal.ZERO;
+        BigDecimal totalTva = BigDecimal.ZERO;
 
         for (LigneDevisRequest ligne : request.travaux()) {
 
@@ -98,11 +103,16 @@ public class DevisService implements IDevisService {
             }
 
             BigDecimal prixUnitaire = prestation.getPrixUnitaire();
+            BigDecimal tauxTva = choisirTauxTva(typeBien, prestation);
 
             BigDecimal montantLigne = prixUnitaire.multiply(ligne.quantite())
                     .setScale(2, RoundingMode.HALF_UP);
 
+            BigDecimal tvaLigne = montantLigne.multiply(tauxTva)
+                    .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+
             totalHt = totalHt.add(montantLigne);
+            totalTva = totalTva.add(tvaLigne);
 
             Contenir contenir = new Contenir();
 
@@ -115,15 +125,10 @@ public class DevisService implements IDevisService {
             contenir.setDevis(devis);
             contenir.setQuantite(ligne.quantite());
             contenir.setPrixUnitaire(prixUnitaire);
+            contenir.setTauxTva(tauxTva);
 
             contenirRepository.save(contenir);
         }
-
-        totalHt = totalHt.setScale(2, RoundingMode.HALF_UP);
-
-        BigDecimal totalTva = totalHt
-                .multiply(new BigDecimal("5.50"))
-                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
 
         BigDecimal totalTtc = totalHt.add(totalTva);
 
@@ -138,5 +143,16 @@ public class DevisService implements IDevisService {
                 totalTva,
                 totalTtc
         );
+    }
+
+    // Local pro : 20 %. Particulier : 5,5 % si le travail fait gagner de l'énergie, sinon 10 %.
+    private BigDecimal choisirTauxTva(TypeBien typeBien, fr.renovial.backend.model.Service prestation) {
+        if (Boolean.TRUE.equals(typeBien.getProfessionnel())) {
+            return TVA_LOCAL_PRO;
+        }
+        if (Boolean.TRUE.equals(prestation.getEconomieEnergie())) {
+            return TVA_ECONOMIE_ENERGIE;
+        }
+        return TVA_AUTRES_TRAVAUX;
     }
 }

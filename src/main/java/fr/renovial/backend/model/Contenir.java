@@ -30,4 +30,7 @@ public class Contenir {
 
     @Column(name = "prix_unitaire", nullable = false, precision = 10, scale = 2)
     private BigDecimal prixUnitaire;
+
+    @Column(name = "taux_tva", nullable = false, precision = 4, scale = 2)
+    private BigDecimal tauxTva;
 }

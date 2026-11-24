@@ -17,4 +17,7 @@ public class TypeBien {
 
     @Column(nullable = false, unique = true, length = 30)
     private String libelle;
+
+    @Column(nullable = false)
+    private Boolean professionnel = false;
 }

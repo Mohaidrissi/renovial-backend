@@ -27,6 +27,9 @@ public class Service {
     @Column(name = "prix_unitaire", nullable = false, precision = 10, scale = 2)
     private BigDecimal prixUnitaire;
 
+    @Column(name = "economie_energie", nullable = false)
+    private Boolean economieEnergie = true;
+
     @Column(nullable = false)
     private Boolean actif = true;
 

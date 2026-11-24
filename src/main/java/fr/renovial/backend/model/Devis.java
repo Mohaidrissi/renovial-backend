@@ -24,9 +24,6 @@ public class Devis {
     @Column(name = "date_creation", nullable = false)
     private LocalDateTime dateCreation;
 
-    @Column(name = "taux_tva", nullable = false, precision = 4, scale = 2)
-    private BigDecimal tauxTva;
-
     @Column(name = "total_ht", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalHt;
 

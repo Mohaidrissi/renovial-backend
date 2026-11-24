@@ -8,6 +8,7 @@ public record PrestationResponse(
         String description,
         BigDecimal prixUnitaire,
         Boolean actif,
+        Boolean economieEnergie,
         UniteResponse unite
 ) {
 }

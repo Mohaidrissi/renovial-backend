@@ -17,7 +17,7 @@ public class TypeBienService implements ITypeBienService {
     @Override
     public List<TypeBienResponse> getTypesBien() {
         return typeBienRepository.findAll().stream()
-                .map(type -> new TypeBienResponse(type.getIdTypeBien(), type.getLibelle()))
+                .map(type -> new TypeBienResponse(type.getIdTypeBien(), type.getLibelle(), type.getProfessionnel()))
                 .toList();
     }
 }

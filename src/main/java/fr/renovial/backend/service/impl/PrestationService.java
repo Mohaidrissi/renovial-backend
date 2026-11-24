@@ -24,6 +24,7 @@ public class PrestationService implements IPrestationService {
                         s.getDescription(),
                         s.getPrixUnitaire(),
                         s.getActif(),
+                        s.getEconomieEnergie(),
                         new UniteResponse(s.getUnite().getCode(), s.getUnite().getLibelle())
                 ))
                 .toList();
