@@ -2,6 +2,7 @@ package fr.renovial.backend.service.impl;
 
 import fr.renovial.backend.dto.request.DevisRequest;
 import fr.renovial.backend.dto.request.LigneDevisRequest;
+import fr.renovial.backend.dto.response.DevisAdminResponse;
 import fr.renovial.backend.dto.response.DevisResponse;
 import fr.renovial.backend.model.*;
 import fr.renovial.backend.repository.*;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DevisService implements IDevisService {
 
-    // Taux de TVA donnés par le chef d'entreprise
+
     private static final BigDecimal TVA_LOCAL_PRO = new BigDecimal("20.00");
     private static final BigDecimal TVA_ECONOMIE_ENERGIE = new BigDecimal("5.50");
     private static final BigDecimal TVA_AUTRES_TRAVAUX = new BigDecimal("10.00");
@@ -32,7 +34,7 @@ public class DevisService implements IDevisService {
     private final IServiceRepository serviceRepository;
     private final ITypeBienRepository typeBienRepository;
     private final IStatutDevisRepository statutDevisRepository;
-    private final IUserRepository userRepository;
+
 
     @Override
     public DevisResponse creerDevis(DevisRequest request) {
@@ -145,7 +147,23 @@ public class DevisService implements IDevisService {
         );
     }
 
-    // Local pro : 20 %. Particulier : 5,5 % si le travail fait gagner de l'énergie, sinon 10 %.
+    // Liste de tous les devis pour l'administrateur, du plus récent au plus ancien
+    @Override
+    public List<DevisAdminResponse> getTousLesDevis() {
+        return devisRepository.findAllByOrderByDateCreationDesc().stream()
+                .map(devis -> new DevisAdminResponse(
+                        devis.getIdDevis(),
+                        devis.getReference(),
+                        devis.getDateCreation(),
+                        devis.getNomContact(),
+                        devis.getEmailContact(),
+                        devis.getTypeBien().getLibelle(),
+                        devis.getStatutDevis().getLibelle(),
+                        devis.getTotalHt(),
+                        devis.getTotalTtc()))
+                .toList();
+    }
+
     private BigDecimal choisirTauxTva(TypeBien typeBien, fr.renovial.backend.model.Service prestation) {
         if (Boolean.TRUE.equals(typeBien.getProfessionnel())) {
             return TVA_LOCAL_PRO;

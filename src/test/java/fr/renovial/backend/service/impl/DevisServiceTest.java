@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-// Vérifie la règle TVA du chef d'entreprise : local pro 20 %, particulier 5,5 % (économie d'énergie) ou 10 %.
+
 @ExtendWith(MockitoExtension.class)
 class DevisServiceTest {
 
@@ -31,7 +31,6 @@ class DevisServiceTest {
     @Mock private IServiceRepository serviceRepository;
     @Mock private ITypeBienRepository typeBienRepository;
     @Mock private IStatutDevisRepository statutDevisRepository;
-    @Mock private IUserRepository userRepository;
 
     @InjectMocks private DevisService devisService;
 

@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/services/actifs").permitAll()
                                 .requestMatchers("/api/types-bien").permitAll()
                                 .requestMatchers("/api/devis").permitAll()
+                                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
