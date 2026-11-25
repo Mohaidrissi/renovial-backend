@@ -9,4 +9,5 @@ import java.util.List;
 public interface IDevisService {
     DevisResponse creerDevis(DevisRequest request);
     List<DevisAdminResponse> getTousLesDevis();
+    DevisAdminResponse changerStatut(Integer idDevis, String code);
 }

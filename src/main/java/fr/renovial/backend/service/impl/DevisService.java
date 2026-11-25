@@ -151,17 +151,43 @@ public class DevisService implements IDevisService {
     @Override
     public List<DevisAdminResponse> getTousLesDevis() {
         return devisRepository.findAllByOrderByDateCreationDesc().stream()
-                .map(devis -> new DevisAdminResponse(
-                        devis.getIdDevis(),
-                        devis.getReference(),
-                        devis.getDateCreation(),
-                        devis.getNomContact(),
-                        devis.getEmailContact(),
-                        devis.getTypeBien().getLibelle(),
-                        devis.getStatutDevis().getLibelle(),
-                        devis.getTotalHt(),
-                        devis.getTotalTtc()))
+                .map(this::versAdminResponse)
                 .toList();
+    }
+
+    // L'admin accepte ou refuse un devis qui est encore en attente
+    @Override
+    public DevisAdminResponse changerStatut(Integer idDevis, String code) {
+        if (!"ACCEPTE".equals(code) && !"REFUSE".equals(code)) {
+            throw new IllegalArgumentException("Statut invalide : choisir ACCEPTE ou REFUSE.");
+        }
+
+        Devis devis = devisRepository.findById(idDevis)
+                .orElseThrow(() -> new IllegalArgumentException("Devis introuvable."));
+
+        if (!"EN_ATTENTE".equals(devis.getStatutDevis().getCode())) {
+            throw new IllegalArgumentException("Ce devis a déjà été traité.");
+        }
+
+        StatutDevis statut = statutDevisRepository.findByCode(code)
+                .orElseThrow(() -> new IllegalStateException("Statut " + code + " introuvable."));
+
+        devis.setStatutDevis(statut);
+        devisRepository.save(devis);
+        return versAdminResponse(devis);
+    }
+
+    private DevisAdminResponse versAdminResponse(Devis devis) {
+        return new DevisAdminResponse(
+                devis.getIdDevis(),
+                devis.getReference(),
+                devis.getDateCreation(),
+                devis.getNomContact(),
+                devis.getEmailContact(),
+                devis.getTypeBien().getLibelle(),
+                devis.getStatutDevis().getLibelle(),
+                devis.getTotalHt(),
+                devis.getTotalTtc());
     }
 
     private BigDecimal choisirTauxTva(TypeBien typeBien, fr.renovial.backend.model.Service prestation) {
