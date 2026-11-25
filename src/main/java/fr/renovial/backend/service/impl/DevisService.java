@@ -3,6 +3,7 @@ package fr.renovial.backend.service.impl;
 import fr.renovial.backend.dto.request.DevisRequest;
 import fr.renovial.backend.dto.request.LigneDevisRequest;
 import fr.renovial.backend.dto.response.DevisAdminResponse;
+import fr.renovial.backend.dto.response.DevisDetailResponse;
 import fr.renovial.backend.dto.response.DevisResponse;
 import fr.renovial.backend.model.*;
 import fr.renovial.backend.repository.*;
@@ -161,6 +162,37 @@ public class DevisService implements IDevisService {
         return devisRepository.findByUtilisateurIdUtilisateurOrderByDateCreationDesc(idUtilisateur).stream()
                 .map(this::versAdminResponse)
                 .toList();
+    }
+
+    // Détail d'un devis du client connecté. Le devis d'un autre client donne le même message
+    // que un devis inexistant : on ne dit pas qu'il existe.
+    @Override
+    public DevisDetailResponse getMonDevis(Integer idDevis, Integer idUtilisateur) {
+        Devis devis = devisRepository.findById(idDevis)
+                .filter(d -> d.getUtilisateur() != null && d.getUtilisateur().getIdUtilisateur().equals(idUtilisateur))
+                .orElseThrow(() -> new IllegalArgumentException("Devis introuvable."));
+
+        List<DevisDetailResponse.Ligne> lignes = contenirRepository.findByDevisIdDevis(idDevis).stream()
+                .map(c -> new DevisDetailResponse.Ligne(
+                        c.getService().getNom(),
+                        c.getQuantite(),
+                        c.getService().getUnite().getCode(),
+                        c.getPrixUnitaire(),
+                        c.getTauxTva(),
+                        c.getPrixUnitaire().multiply(c.getQuantite()).setScale(2, RoundingMode.HALF_UP)))
+                .toList();
+
+        return new DevisDetailResponse(
+                devis.getIdDevis(),
+                devis.getReference(),
+                devis.getDateCreation(),
+                devis.getTypeBien().getLibelle(),
+                devis.getStatutDevis().getLibelle(),
+                devis.getPrecisions(),
+                devis.getCommentaireAdmin(),
+                devis.getTotalHt(),
+                devis.getTotalTtc(),
+                lignes);
     }
 
     // L'admin accepte ou refuse un devis qui est encore en attente

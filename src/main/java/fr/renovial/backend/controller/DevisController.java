@@ -2,6 +2,7 @@ package fr.renovial.backend.controller;
 
 import fr.renovial.backend.dto.request.DevisRequest;
 import fr.renovial.backend.dto.response.DevisAdminResponse;
+import fr.renovial.backend.dto.response.DevisDetailResponse;
 import fr.renovial.backend.dto.response.DevisResponse;
 import fr.renovial.backend.model.Utilisateur;
 import fr.renovial.backend.service.IDevisService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,5 +40,13 @@ public class DevisController {
     public ResponseEntity<List<DevisAdminResponse>> getMesDevis(@AuthenticationPrincipal Utilisateur utilisateur) {
         log.debug("REST request to get devis of utilisateur {}", utilisateur.getIdUtilisateur());
         return ResponseEntity.ok(devisService.getMesDevis(utilisateur.getIdUtilisateur()));
+    }
+
+    // Détail d'un devis : le service vérifie que le devis appartient bien au client connecté
+    @GetMapping("/mes-devis/{idDevis}")
+    public ResponseEntity<DevisDetailResponse> getMonDevis(@PathVariable Integer idDevis,
+                                                           @AuthenticationPrincipal Utilisateur utilisateur) {
+        log.debug("REST request to get devis {} of utilisateur {}", idDevis, utilisateur.getIdUtilisateur());
+        return ResponseEntity.ok(devisService.getMonDevis(idDevis, utilisateur.getIdUtilisateur()));
     }
 }
