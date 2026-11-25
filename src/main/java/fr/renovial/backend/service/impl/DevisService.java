@@ -155,6 +155,14 @@ public class DevisService implements IDevisService {
                 .toList();
     }
 
+    // Devis du client connecté, du plus récent au plus ancien
+    @Override
+    public List<DevisAdminResponse> getMesDevis(Integer idUtilisateur) {
+        return devisRepository.findByUtilisateurIdUtilisateurOrderByDateCreationDesc(idUtilisateur).stream()
+                .map(this::versAdminResponse)
+                .toList();
+    }
+
     // L'admin accepte ou refuse un devis qui est encore en attente
     @Override
     public DevisAdminResponse changerStatut(Integer idDevis, String code) {

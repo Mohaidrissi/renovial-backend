@@ -10,4 +10,5 @@ public interface IDevisService {
     DevisResponse creerDevis(DevisRequest request);
     List<DevisAdminResponse> getTousLesDevis();
     DevisAdminResponse changerStatut(Integer idDevis, String code);
+    List<DevisAdminResponse> getMesDevis(Integer idUtilisateur);
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface IDevisRepository extends JpaRepository<Devis, Integer> {
     List<Devis> findAllByOrderByDateCreationDesc();
+    List<Devis> findByUtilisateurIdUtilisateurOrderByDateCreationDesc(Integer idUtilisateur);
 }
