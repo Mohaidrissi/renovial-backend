@@ -48,20 +48,26 @@ class DevisChangerStatutTest {
         devisAvecStatut("EN_ATTENTE");
         when(statutDevisRepository.findByCode("ACCEPTE")).thenReturn(Optional.of(statut("ACCEPTE", "Accepté")));
 
-        DevisAdminResponse response = devisService.changerStatut(1, "ACCEPTE");
+        DevisAdminResponse response = devisService.changerStatut(1, "ACCEPTE", "  Travaux prévus en janvier.  ");
 
         assertEquals("Accepté", response.statut());
+        assertEquals("Travaux prévus en janvier.", response.commentaireAdmin());
     }
 
     @Test
     void refuserUnDevisDejaTraiteEstInterdit() {
         devisAvecStatut("ACCEPTE");
 
-        assertThrows(IllegalArgumentException.class, () -> devisService.changerStatut(1, "REFUSE"));
+        assertThrows(IllegalArgumentException.class, () -> devisService.changerStatut(1, "REFUSE", "Hors zone."));
+    }
+
+    @Test
+    void refuserSansCommentaireEstInterdit() {
+        assertThrows(IllegalArgumentException.class, () -> devisService.changerStatut(1, "REFUSE", "   "));
     }
 
     @Test
     void statutInconnuEstInterdit() {
-        assertThrows(IllegalArgumentException.class, () -> devisService.changerStatut(1, "EN_ATTENTE"));
+        assertThrows(IllegalArgumentException.class, () -> devisService.changerStatut(1, "EN_ATTENTE", null));
     }
 }

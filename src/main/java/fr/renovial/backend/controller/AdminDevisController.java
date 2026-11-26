@@ -33,6 +33,6 @@ public class AdminDevisController {
     public ResponseEntity<DevisAdminResponse> changerStatut(@PathVariable Integer idDevis,
                                                             @RequestBody StatutDevisRequest request) {
         log.debug("REST request to change statut of devis {} to {}", idDevis, request.code());
-        return ResponseEntity.ok(devisService.changerStatut(idDevis, request.code()));
+        return ResponseEntity.ok(devisService.changerStatut(idDevis, request.code(), request.commentaire()));
     }
 }

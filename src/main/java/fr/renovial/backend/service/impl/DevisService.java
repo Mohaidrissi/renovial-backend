@@ -195,11 +195,20 @@ public class DevisService implements IDevisService {
                 lignes);
     }
 
-    // L'admin accepte ou refuse un devis qui est encore en attente
+    // L'admin accepte ou refuse un devis qui est encore en attente.
+    // Le commentaire est lu par le client ; il est obligatoire pour un refus.
     @Override
-    public DevisAdminResponse changerStatut(Integer idDevis, String code) {
+    public DevisAdminResponse changerStatut(Integer idDevis, String code, String commentaire) {
         if (!"ACCEPTE".equals(code) && !"REFUSE".equals(code)) {
             throw new IllegalArgumentException("Statut invalide : choisir ACCEPTE ou REFUSE.");
+        }
+
+        String texte = commentaire == null ? "" : commentaire.trim();
+        if ("REFUSE".equals(code) && texte.isEmpty()) {
+            throw new IllegalArgumentException("Expliquez au client pourquoi le devis est refusé.");
+        }
+        if (texte.length() > 1000) {
+            throw new IllegalArgumentException("Le commentaire est trop long (1000 caractères maximum).");
         }
 
         Devis devis = devisRepository.findById(idDevis)
@@ -213,6 +222,8 @@ public class DevisService implements IDevisService {
                 .orElseThrow(() -> new IllegalStateException("Statut " + code + " introuvable."));
 
         devis.setStatutDevis(statut);
+        devis.setCommentaireAdmin(texte.isEmpty() ? null : texte);
+        devis.setDateTraitement(LocalDateTime.now());
         devisRepository.save(devis);
         return versAdminResponse(devis);
     }
@@ -227,7 +238,8 @@ public class DevisService implements IDevisService {
                 devis.getTypeBien().getLibelle(),
                 devis.getStatutDevis().getLibelle(),
                 devis.getTotalHt(),
-                devis.getTotalTtc());
+                devis.getTotalTtc(),
+                devis.getCommentaireAdmin());
     }
 
     private BigDecimal choisirTauxTva(TypeBien typeBien, fr.renovial.backend.model.Service prestation) {

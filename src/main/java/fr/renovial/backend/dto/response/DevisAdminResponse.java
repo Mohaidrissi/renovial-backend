@@ -12,6 +12,7 @@ public record DevisAdminResponse(
         String typeBien,
         String statut,
         BigDecimal totalHt,
-        BigDecimal totalTtc
+        BigDecimal totalTtc,
+        String commentaireAdmin
 ) {
 }

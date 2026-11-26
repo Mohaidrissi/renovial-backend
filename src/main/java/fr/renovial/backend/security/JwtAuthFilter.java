@@ -53,7 +53,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 final UserDetails userDetails =
                         userDetailsService.loadUserByUsername(username);
 
-                if (jwtService.validateToken(token, userDetails)) {
+                // Un compte bloqué par l'admin (isEnabled = false) est refusé tout de suite, même avec un token encore valide
+                if (userDetails.isEnabled() && jwtService.validateToken(token, userDetails)) {
 
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
