@@ -8,4 +8,10 @@ public interface IServiceRepository extends JpaRepository<Service, Integer> {
 
     List<Service> findByActifTrue();
 
+    List<Service> findAllByOrderByNomAsc();
+
+    boolean existsByNomIgnoreCase(String nom);
+
+    boolean existsByNomIgnoreCaseAndIdServiceNot(String nom, Integer idService);
+
 }
